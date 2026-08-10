@@ -1,14 +1,14 @@
 const MAX_BODY_BYTES = 20_000;
 
 const FIELD_LIMITS = {
-  date: 10, roadshowLocation: 150, roadshowState: 100, fullName: 150,
-  mobileNumber: 30, icLast4: 4, agentName: 150, agentId: 80,
+  date: 10, roadshowLocation: 150, roadshowState: 100, fullName: 150, emailAddress: 254,
+  mobileNumber: 30, icNumber: 30, agentName: 150, agentId: 80,
   gmName: 150, currentInsuranceCompany: 150, ageBand: 10,
   maritalStatus: 30, employmentType: 110, monthlyPersonalIncome: 20,
 };
 const REQUIRED_FIELDS = [
-  "date", "roadshowLocation", "roadshowState", "fullName", "mobileNumber",
-  "icLast4", "agentName", "agentId", "gmName", "ageBand", "maritalStatus",
+  "date", "roadshowLocation", "roadshowState", "fullName", "emailAddress", "mobileNumber",
+  "icNumber", "agentName", "agentId", "gmName", "ageBand", "maritalStatus",
   "employmentType", "monthlyPersonalIncome",
 ];
 const OUTCOME_LIMITS = {
@@ -80,11 +80,17 @@ function validateCreate(data) {
   }
   if (data.consent !== true) throw new Error("Consent is required");
 
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned.emailAddress)) {
+    throw new Error("Invalid email address");
+  }
+
   const phoneDigits = cleaned.mobileNumber.replace(/\D/g, "");
   if (!/^\+?[0-9 ]+$/.test(cleaned.mobileNumber) || phoneDigits.length < 7 || phoneDigits.length > 15) {
     throw new Error("Invalid mobile number");
   }
-  if (!/^\d{4}$/.test(cleaned.icLast4)) throw new Error("IC last 4 must contain exactly 4 numbers");
+  if (!/^[A-Za-z0-9 -]+$/.test(cleaned.icNumber)) {
+    throw new Error("IC number may contain letters, numbers, spaces, and hyphens only");
+  }
   if (!validDate(cleaned.date)) throw new Error("Invalid date");
   if (!ALLOWED.roadshowLocation.includes(cleaned.roadshowLocation)) throw new Error("Invalid roadshow location");
   if (!ALLOWED.roadshowState.includes(cleaned.roadshowState)) throw new Error("Invalid roadshow state");
@@ -108,8 +114,9 @@ function validateCreate(data) {
     roadshowLocation: cleaned.roadshowLocation,
     roadshowState: cleaned.roadshowState,
     fullName: cleaned.fullName,
+    emailAddress: cleaned.emailAddress,
     mobileNumber: cleaned.mobileNumber,
-    icLast4: cleaned.icLast4,
+    icNumber: cleaned.icNumber,
     agentName: cleaned.agentName,
     agentId: cleaned.agentId,
     gmName: cleaned.gmName,

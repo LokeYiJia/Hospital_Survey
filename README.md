@@ -49,26 +49,28 @@ Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have 
 2. Roadshow Location
 3. Roadshow State
 4. Full Name
-5. Mobile Number
-6. IC Num (last 4 digits)
-7. Agent Name
-8. Agent ID
-9. GM Name
-10. Current Insurance Company
-11. Age Band
-12. Marital Status
-13. Employment Type
-14. Monthly Income
-15. Existing Insurance Plan
-16. Financial Priorities in the next 12 months
-17. Presentation done
-18. Potential follow up
-19. On the spot close case
-20. ANP
-21. Submission Timestamp
-22. Submission ID
+5. Email Address
+6. Mobile Number
+7. IC Number
+8. Agent Name
+9. Agent ID
+10. GM Name
+11. Current Insurance Company
+12. Age Band
+13. Marital Status
+14. Employment Type
+15. Monthly Income
+16. Existing Insurance Plan
+17. Financial Priorities in the next 12 months
+18. Presentation done
+19. Potential follow up
+20. On the spot close case
+21. ANP
+22. Submission Timestamp
+23. Submission ID
+24. Email Sent Timestamp
 
-Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 16 lead fields, four blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates only the four outcome cells in the same row. `Submission ID` can be hidden in Google Sheets but must not be deleted.
+Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 17 lead fields, four blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID, updates the four outcome cells in the same row, and emails the completed submission to `Email Address`. The IC number is masked in the email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted; the email timestamp prevents duplicate sends when the completion request is retried.
 
 ## Google Apps Script deployment
 
@@ -93,8 +95,9 @@ It forwards only these keys to Apps Script, in this order:
   "roadshowLocation": "",
   "roadshowState": "",
   "fullName": "",
+  "emailAddress": "",
   "mobileNumber": "",
-  "icLast4": "",
+  "icNumber": "",
   "agentName": "",
   "agentId": "",
   "gmName": "",
