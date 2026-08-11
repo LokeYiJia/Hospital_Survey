@@ -27,7 +27,7 @@ const FINANCIAL_PRIORITIES = [
 
 const initialForm = {
   date: "", roadshowLocation: "", roadshowState: "", fullName: "", emailAddress: "", mobileNumber: "", icNumber: "",
-  agentName: "", agentId: "", gmName: "", currentInsuranceCompany: "",
+  agentName: "", agentId: "", agentEmail: "", gmName: "", currentInsuranceCompany: "",
   ageBand: "", maritalStatus: "", employmentType: "", employmentTypeOther: "",
   monthlyPersonalIncome: "", existingInsurancePlans: [], financialPriorities: [], consent: false,
 };
@@ -171,7 +171,7 @@ export default function App() {
       setSubmissionDetails(initialSubmissionDetails);
       setSubmissionId("");
       setShowSubmissionDetails(false);
-      setStatus({ type: "success", message: "Survey submitted successfully. A confirmation email has been sent." });
+      setStatus({ type: "success", message: "Survey submitted successfully." });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       setStatus({ type: "error", message: error.message || "Unable to submit the survey. Please try again." });
@@ -217,7 +217,8 @@ export default function App() {
               <label className="field full-width"><span>Roadshow State *</span><select name="roadshowState" value={form.roadshowState} onChange={update} required autoComplete="off"><option value="" disabled>Select a state</option>{ROADSHOW_STATES.map((state) => <option value={state} key={state}>{state}</option>)}</select></label>
               <label className="field"><span>Agent Name *</span><input name="agentName" value={form.agentName} onChange={update} required maxLength="150" autoComplete="off" /></label>
               <label className="field"><span>Agent ID *</span><input name="agentId" value={form.agentId} onChange={update} required maxLength="80" autoComplete="off" /></label>
-              <label className="field full-width"><span>GM Name *</span><input name="gmName" value={form.gmName} onChange={update} required maxLength="150" autoComplete="off" /></label>
+              <label className="field"><span>Agent Email *</span><input name="agentEmail" type="email" value={form.agentEmail} onChange={update} required maxLength="254" inputMode="email" autoComplete="off" /></label>
+              <label className="field"><span>GM Name *</span><input name="gmName" value={form.gmName} onChange={update} required maxLength="150" autoComplete="off" /></label>
             </div>
           </section>
 

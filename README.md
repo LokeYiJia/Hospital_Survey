@@ -54,23 +54,26 @@ Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have 
 7. IC Number
 8. Agent Name
 9. Agent ID
-10. GM Name
-11. Current Insurance Company
-12. Age Band
-13. Marital Status
-14. Employment Type
-15. Monthly Income
-16. Existing Insurance Plan
-17. Financial Priorities in the next 12 months
-18. Presentation done
-19. Potential follow up
-20. On the spot close case
-21. ANP
-22. Submission Timestamp
-23. Submission ID
-24. Email Sent Timestamp
+10. Agent Email
+11. GM Name
+12. Current Insurance Company
+13. Age Band
+14. Marital Status
+15. Employment Type
+16. Monthly Income
+17. Existing Insurance Plan
+18. Financial Priorities in the next 12 months
+19. Presentation done
+20. Potential follow up
+21. On the spot close case
+22. ANP
+23. Submission Timestamp
+24. Submission ID
+25. Email Sent Timestamp
 
-Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 17 lead fields, four blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID, updates the four outcome cells in the same row, and emails the completed submission to `Email Address`. The IC number is masked in the email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted; the email timestamp prevents duplicate sends when the completion request is retried.
+Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 18 lead fields, four blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates the four outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
+
+When the spreadsheet is opened, Apps Script adds **Agent Reports > Send unsent agent reports** to the Google Sheets menu. The command groups completed rows with a blank `Email Sent Timestamp` by `Agent Email`, sends one combined email to each unique agent, and timestamps every included row. Rows with incomplete popup answers or invalid agent email addresses are skipped. IC numbers are masked in the report.
 
 ## Google Apps Script deployment
 
@@ -100,6 +103,7 @@ It forwards only these keys to Apps Script, in this order:
   "icNumber": "",
   "agentName": "",
   "agentId": "",
+  "agentEmail": "",
   "gmName": "",
   "currentInsuranceCompany": "",
   "ageBand": "",

@@ -2,13 +2,13 @@ const MAX_BODY_BYTES = 20_000;
 
 const FIELD_LIMITS = {
   date: 10, roadshowLocation: 150, roadshowState: 100, fullName: 150, emailAddress: 254,
-  mobileNumber: 30, icNumber: 30, agentName: 150, agentId: 80,
+  mobileNumber: 30, icNumber: 30, agentName: 150, agentId: 80, agentEmail: 254,
   gmName: 150, currentInsuranceCompany: 150, ageBand: 10,
   maritalStatus: 30, employmentType: 110, monthlyPersonalIncome: 20,
 };
 const REQUIRED_FIELDS = [
   "date", "roadshowLocation", "roadshowState", "fullName", "emailAddress", "mobileNumber",
-  "icNumber", "agentName", "agentId", "gmName", "ageBand", "maritalStatus",
+  "icNumber", "agentName", "agentId", "agentEmail", "gmName", "ageBand", "maritalStatus",
   "employmentType", "monthlyPersonalIncome",
 ];
 const OUTCOME_LIMITS = {
@@ -83,6 +83,9 @@ function validateCreate(data) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned.emailAddress)) {
     throw new Error("Invalid email address");
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned.agentEmail)) {
+    throw new Error("Invalid agent email address");
+  }
 
   const phoneDigits = cleaned.mobileNumber.replace(/\D/g, "");
   if (!/^\+?[0-9 ]+$/.test(cleaned.mobileNumber) || phoneDigits.length < 7 || phoneDigits.length > 15) {
@@ -119,6 +122,7 @@ function validateCreate(data) {
     icNumber: cleaned.icNumber,
     agentName: cleaned.agentName,
     agentId: cleaned.agentId,
+    agentEmail: cleaned.agentEmail,
     gmName: cleaned.gmName,
     currentInsuranceCompany: cleaned.currentInsuranceCompany,
     ageBand: cleaned.ageBand,
