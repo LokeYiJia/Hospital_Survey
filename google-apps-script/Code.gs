@@ -194,68 +194,73 @@ function sendAgentReports() {
 
 function buildAgentReport_(agentEmail, leads) {
   var generatedAt = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss");
+  var columns = [
+    { label: "Date", value: function (values) { return values[0]; } },
+    { label: "Roadshow Location", value: function (values) { return values[1]; } },
+    { label: "Roadshow State", value: function (values) { return values[2]; } },
+    { label: "Full Name", value: function (values) { return values[3]; } },
+    { label: "Email Address", value: function (values) { return values[4]; } },
+    { label: "Mobile Number", value: function (values) { return values[5]; } },
+    { label: "IC Number", value: function (values) { return maskIcNumber_(values[6]); } },
+    { label: "Agent Name", value: function (values) { return values[7]; } },
+    { label: "Agent ID", value: function (values) { return values[8]; } },
+    { label: "GM Name", value: function (values) { return values[10]; } },
+    { label: "Current Insurance Company", value: function (values) { return values[11]; } },
+    { label: "Age Band", value: function (values) { return values[12]; } },
+    { label: "Marital Status", value: function (values) { return values[13]; } },
+    { label: "Employment Type", value: function (values) { return values[14]; } },
+    { label: "Monthly Income", value: function (values) { return values[15]; } },
+    { label: "Existing Insurance Plan", value: function (values) { return values[16]; } },
+    { label: "Financial Priorities", value: function (values) { return values[17]; } },
+    { label: "Presentation done", value: function (values) { return values[18]; } },
+    { label: "Potential follow up", value: function (values) { return values[19]; } },
+    { label: "On the spot close case", value: function (values) { return values[20]; } },
+    { label: "ANP", value: function (values) { return values[21]; } },
+    { label: "Submission Timestamp", value: function (values) { return values[22]; } }
+  ];
   var textLines = [
     "Hello,",
     "",
     "Here are " + leads.length + (leads.length === 1 ? " lead" : " leads") + " assigned to " + agentEmail + ".",
-    ""
+    "",
+    ["Lead"].concat(columns.map(function (column) { return column.label; })).join("\t")
   ];
-  var htmlSections = leads.map(function (lead, index) {
-    var values = lead.values;
-    var maskedIc = maskIcNumber_(values[6]);
-    var fields = [
-      ["Date", values[0]],
-      ["Roadshow Location", values[1]],
-      ["Roadshow State", values[2]],
-      ["Full Name", values[3]],
-      ["Email Address", values[4]],
-      ["Mobile Number", values[5]],
-      ["IC Number", maskedIc],
-      ["Agent Name", values[7]],
-      ["Agent ID", values[8]],
-      ["GM Name", values[10]],
-      ["Current Insurance Company", values[11]],
-      ["Age Band", values[12]],
-      ["Marital Status", values[13]],
-      ["Employment Type", values[14]],
-      ["Monthly Income", values[15]],
-      ["Existing Insurance Plan", values[16]],
-      ["Financial Priorities", values[17]],
-      ["Presentation done", values[18]],
-      ["Potential follow up", values[19]],
-      ["On the spot close case", values[20]],
-      ["ANP", values[21]],
-      ["Submission Timestamp", values[22]]
-    ];
 
-    textLines.push("Lead " + (index + 1));
-    fields.forEach(function (field) {
-      textLines.push(field[0] + ": " + field[1]);
-    });
-    textLines.push("");
-
-    var rows = fields.map(function (field) {
-      return "<tr><th style=\"padding:6px 10px;text-align:left;vertical-align:top;background:#f3f5f7;border:1px solid #d9dde3\">"
-        + escapeHtml_(field[0])
-        + "</th><td style=\"padding:6px 10px;border:1px solid #d9dde3\">"
-        + escapeHtml_(field[1]) + "</td></tr>";
+  var headerCells = ["Lead"].concat(columns.map(function (column) { return column.label; }))
+    .map(function (label) {
+      return "<th style=\"padding:8px 10px;text-align:left;vertical-align:top;white-space:nowrap;background:#102746;color:#ffffff;border:1px solid #d9dde3\">"
+        + escapeHtml_(label) + "</th>";
     }).join("");
 
-    return "<h2 style=\"color:#102746;margin:24px 0 8px\">Lead " + (index + 1)
-      + ": " + escapeHtml_(values[3]) + "</h2>"
-      + "<table style=\"border-collapse:collapse;width:100%;max-width:760px\">" + rows + "</table>";
+  var htmlRows = leads.map(function (lead, index) {
+    var rowValues = columns.map(function (column) { return column.value(lead.values); });
+    textLines.push([index + 1].concat(rowValues).map(plainTextCell_).join("\t"));
+
+    var cells = [index + 1].concat(rowValues).map(function (value) {
+      return "<td style=\"padding:8px 10px;text-align:left;vertical-align:top;border:1px solid #d9dde3\">"
+        + escapeHtml_(value) + "</td>";
+    }).join("");
+    return "<tr style=\"background:" + (index % 2 === 0 ? "#ffffff" : "#f7f8fa") + "\">" + cells + "</tr>";
   }).join("");
 
+  var htmlTable = "<div style=\"width:100%;overflow-x:auto\"><table style=\"border-collapse:collapse;min-width:1800px\">"
+    + "<thead><tr>" + headerCells + "</tr></thead><tbody>" + htmlRows + "</tbody></table></div>";
+
+  textLines.push("");
   textLines.push("Report generated: " + generatedAt);
   return {
     text: textLines.join("\n"),
     html: "<div style=\"font-family:Arial,Helvetica,sans-serif;color:#172033\">"
       + "<p>Hello,</p><p>Here are <strong>" + leads.length
       + (leads.length === 1 ? " lead" : " leads") + "</strong> assigned to "
-      + escapeHtml_(agentEmail) + ".</p>" + htmlSections
+      + escapeHtml_(agentEmail) + ".</p>" + htmlTable
       + "<p style=\"margin-top:24px;color:#5c667a\">Report generated: "
       + escapeHtml_(generatedAt) + "</p></div>"
   };
+}
+
+function plainTextCell_(value) {
+  return String(value == null ? "" : value).replace(/[\t\r\n]+/g, " ");
 }
 
 function maskIcNumber_(value) {
