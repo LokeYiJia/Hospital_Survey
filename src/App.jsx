@@ -184,13 +184,13 @@ export default function App() {
   return (
     <main className="page-shell">
       <form className="survey" onSubmit={createSubmission} autoComplete="off">
-        <header className="survey-header"><h1>Great Eastern Survey</h1></header>
+        <header className="survey-header"><h1>Register for Free PA</h1></header>
 
         <div className="form-layout">
           <section>
             <h2>1. Personal Details</h2>
             <div className="field-grid">
-              <label className="field"><span>Full Name *</span><input name="fullName" value={form.fullName} onChange={update} required maxLength="150" autoComplete="off" /></label>
+              <label className="field"><span>Full Name (as per NRIC) *</span><input name="fullName" value={form.fullName} onChange={update} required maxLength="150" autoComplete="off" /></label>
               <label className="field"><span>Email Address *</span><input name="emailAddress" type="email" value={form.emailAddress} onChange={update} required maxLength="254" inputMode="email" autoComplete="off" /></label>
               <label className="field"><span>Mobile Number *</span><input name="mobileNumber" type="tel" value={form.mobileNumber} onChange={update} required pattern="[+0-9 ]+" title="Use only numbers, spaces, and +" maxLength="30" inputMode="tel" autoComplete="off" /></label>
               <label className="field"><span>IC Number *</span><input name="icNumber" value={form.icNumber} onChange={update} required pattern="[A-Za-z0-9 -]+" title="Use letters, numbers, spaces, or hyphens" maxLength="30" inputMode="text" autoComplete="off" /></label>
@@ -231,6 +231,7 @@ export default function App() {
         <footer className="survey-footer">
           <button type="submit" disabled={submitting}>{submitting ? "Submitting…" : "Submit Survey"}</button>
           {status.message && !showSubmissionDetails && <p className={`status ${status.type}`} role={status.type === "error" ? "alert" : "status"} aria-live="polite">{status.message}</p>}
+          <p className="prepared-by">*prepared by CFE department</p>
         </footer>
       </form>
 

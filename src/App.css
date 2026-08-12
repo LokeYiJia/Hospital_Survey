@@ -143,6 +143,13 @@ legend { margin-bottom: 11px; font-weight: 700; }
   background: rgba(255, 255, 255, 0.94);
 }
 
+.prepared-by {
+  margin: 22px 0 0;
+  color: #ff0000;
+  font-size: 12px;
+  text-align: left;
+}
+
 button {
   display: block;
   min-width: 180px;
