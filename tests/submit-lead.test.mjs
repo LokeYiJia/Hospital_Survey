@@ -17,7 +17,7 @@ const validCreate = () => ({
 });
 const validComplete = () => ({
   action: "complete", submissionId, presentationDone: "Yes", potentialFollowUp: "No",
-  onTheSpotCloseCase: "No", anp: "1200.50",
+  onTheSpotCloseCase: "No", paDuration: "3 month", anp: "1200.50",
 });
 const requestFor = (body, options = {}) => new Request("https://survey.example/api/submit-lead", {
   method: options.method || "POST",
@@ -75,6 +75,7 @@ test("rejects invalid state, popup answers, and ANP", async () => {
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), roadshowLocation: "Unknown Hospital" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), roadshowState: "Sabah" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), presentationDone: "Maybe" }), env })).status, 400);
+  assert.equal((await onRequest({ request: requestFor({ ...validComplete(), paDuration: "12 month" }), env })).status, 400);
   const response = await onRequest({ request: requestFor({ ...validComplete(), anp: "RM 1,200" }), env });
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /ANP must be a number/i);

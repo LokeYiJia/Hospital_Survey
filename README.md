@@ -66,12 +66,13 @@ Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have 
 19. Presentation done
 20. Potential follow up
 21. On the spot close case
-22. ANP
-23. Submission Timestamp
-24. Submission ID
-25. Email Sent Timestamp
+22. 3 month / 6 month PA?
+23. ANP
+24. Submission Timestamp
+25. Submission ID
+26. Email Sent Timestamp
 
-Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 18 lead fields, four blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates the four outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
+Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 18 lead fields, five blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates the five outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
 
 When the spreadsheet is opened, Apps Script adds **Agent Reports > Send unsent agent reports** to the Google Sheets menu. The command groups completed rows with a blank `Email Sent Timestamp` by `Agent Email`, sends one combined table with one row per lead to each unique agent, and timestamps every included Sheet row. Rows with incomplete popup answers or invalid agent email addresses are skipped. IC numbers are masked in the report.
 
@@ -87,7 +88,7 @@ Every Apps Script code change requires a **new Web App deployment version** (or 
 
 ## Submission contract
 
-The Pages Function accepts only `POST` with `application/json`, limits request size, trims text, and validates the GE question set, required checkbox groups, consent, the three Yes/No popup fields, and numeric ANP.
+The Pages Function accepts only `POST` with `application/json`, limits request size, trims text, and validates the GE question set, required checkbox groups, consent, the three Yes/No popup fields, the PA duration choice, and numeric ANP.
 
 It forwards only these keys to Apps Script, in this order:
 
@@ -115,7 +116,7 @@ It forwards only these keys to Apps Script, in this order:
 }
 ```
 
-The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, and ANP. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
+The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, and ANP. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
 
 The frontend does not set a short request timeout or automatically retry. It disables submission immediately and also uses an in-flight guard against duplicate clicks. Values are cleared only after confirmed success and retained after failure.
 

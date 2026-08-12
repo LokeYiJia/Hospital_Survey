@@ -34,11 +34,11 @@ button, input, select { font: inherit; }
 }
 
 .survey-header {
-  min-height: 110px;
-  padding: 24px 32px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  min-height: 132px;
+  padding: 28px 32px 30px;
+  display: flex;
   align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid #d8dee7;
 }
@@ -51,14 +51,45 @@ button, input, select { font: inherit; }
 }
 
 .survey-header h1 {
-  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
   margin: 0;
-  color: #ed1b2f;
   font-family: "Avenir Next Rounded", "Avenir Next", "Nunito Sans", Arial, Helvetica, sans-serif;
-  font-size: clamp(1.75rem, 5vw, 2.65rem);
-  font-weight: 700;
-  letter-spacing: 0.01em;
   text-align: center;
+}
+
+.header-kicker {
+  color: #5e6877;
+  font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.header-title {
+  position: relative;
+  padding-bottom: 12px;
+  color: #ed1b2f;
+  font-size: clamp(1.8rem, 4.8vw, 2.75rem);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+
+.header-title::after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 54px;
+  height: 3px;
+  content: "";
+  background: #0753a6;
+  border-radius: 999px;
+  transform: translateX(-50%);
 }
 
 .form-layout {
@@ -224,14 +255,13 @@ button:focus-visible {
     box-shadow: none;
   }
   .survey-header {
-    min-height: 104px;
-    padding: 20px 16px;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    text-align: center;
+    min-height: 120px;
+    padding: 24px 16px 26px;
   }
   .brand-name { font-size: 1.35rem; }
-  .survey-header h1 { grid-column: 1; font-size: 1.55rem; }
+  .survey-header h1 { gap: 6px; }
+  .header-kicker { font-size: 0.7rem; letter-spacing: 0.1em; }
+  .header-title { font-size: clamp(1.65rem, 8vw, 2.1rem); }
   section { padding: 22px 18px 26px; }
   h2 { margin: -22px -18px 22px; }
   .field-grid, .choices, .checkbox-grid { grid-template-columns: 1fr; }

@@ -12,7 +12,7 @@ const REQUIRED_FIELDS = [
   "employmentType", "monthlyPersonalIncome",
 ];
 const OUTCOME_LIMITS = {
-  presentationDone: 3, potentialFollowUp: 3, onTheSpotCloseCase: 3, anp: 20,
+  presentationDone: 3, potentialFollowUp: 3, onTheSpotCloseCase: 3, paDuration: 7, anp: 20,
 };
 const ALLOWED = {
   roadshowLocation: [
@@ -149,6 +149,9 @@ function validateComplete(data) {
   if (![cleaned.presentationDone, cleaned.potentialFollowUp, cleaned.onTheSpotCloseCase]
     .every((value) => value === "Yes" || value === "No")) {
     throw new Error("Invalid Yes or No submission detail");
+  }
+  if (cleaned.paDuration !== "3 month" && cleaned.paDuration !== "6 month") {
+    throw new Error("PA duration must be 3 month or 6 month");
   }
   if (!/^\d+(?:\.\d{1,2})?$/.test(cleaned.anp)) {
     throw new Error("ANP must be a number with no more than two decimal places");

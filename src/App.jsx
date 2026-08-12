@@ -33,7 +33,7 @@ const initialForm = {
 };
 
 const initialSubmissionDetails = {
-  presentationDone: "", potentialFollowUp: "", onTheSpotCloseCase: "", anp: "",
+  presentationDone: "", potentialFollowUp: "", onTheSpotCloseCase: "", paDuration: "", anp: "",
 };
 
 function ChoiceGroup({ legend, name, options, value, onChange, required = true }) {
@@ -184,7 +184,12 @@ export default function App() {
   return (
     <main className="page-shell">
       <form className="survey" onSubmit={createSubmission} autoComplete="off">
-        <header className="survey-header"><h1>Register for Free PA Insurance</h1></header>
+        <header className="survey-header">
+          <h1>
+            <span className="header-kicker">Register for your complimentary</span>
+            <span className="header-title">Great Eastern PA Insurance</span>
+          </h1>
+        </header>
 
         <div className="form-layout">
           <section>
@@ -243,6 +248,7 @@ export default function App() {
             <ChoiceGroup legend="Presentation done" name="presentationDone" options={["Yes", "No"]} value={submissionDetails.presentationDone} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="Potential follow up" name="potentialFollowUp" options={["Yes", "No"]} value={submissionDetails.potentialFollowUp} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="On the spot close case" name="onTheSpotCloseCase" options={["Yes", "No"]} value={submissionDetails.onTheSpotCloseCase} onChange={updateSubmissionDetail} />
+            <ChoiceGroup legend="3 month / 6 month PA?" name="paDuration" options={["3 month", "6 month"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} />
             <label className="field"><span>ANP *</span><input name="anp" value={submissionDetails.anp} onChange={updateSubmissionDetail} required pattern="[0-9]+(?:\.[0-9]{1,2})?" title="Enter a number with no more than two decimal places" maxLength="20" inputMode="decimal" placeholder="0.00" autoComplete="off" /></label>
             {status.message && <p className={`status ${status.type}`} role={status.type === "error" ? "alert" : "status"} aria-live="polite">{status.message}</p>}
             <div className="modal-actions"><button type="submit" disabled={submitting}>{submitting ? "Submitting…" : "Confirm & Submit"}</button></div>
