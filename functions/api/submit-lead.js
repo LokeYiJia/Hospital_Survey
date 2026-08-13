@@ -131,6 +131,7 @@ function validateCreate(data) {
     monthlyPersonalIncome: cleaned.monthlyPersonalIncome,
     existingInsurancePlans: plans.join(", "),
     financialPriorities: priorities.join(", "),
+    agreedToTerms: "Yes",
   };
 }
 

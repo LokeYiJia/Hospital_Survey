@@ -46,12 +46,13 @@ test("creates a lead and forwards the GE fields in order", async (t) => {
     "action", "date", "roadshowLocation", "roadshowState", "fullName", "emailAddress", "mobileNumber",
     "icNumber", "agentName", "agentId", "agentEmail", "gmName", "currentInsuranceCompany", "ageBand",
     "maritalStatus", "employmentType", "monthlyPersonalIncome", "existingInsurancePlans",
-    "financialPriorities",
+    "financialPriorities", "agreedToTerms",
   ]);
   assert.equal(forwarded.roadshowLocation, "Gleneagles");
   assert.equal(forwarded.emailAddress, "alex@example.com");
   assert.equal(forwarded.agentEmail, "agent@example.com");
   assert.equal(forwarded.icNumber, "0304150704063");
+  assert.equal(forwarded.agreedToTerms, "Yes");
   assert.equal("consent" in forwarded, false);
   assert.equal("participantType" in forwarded, false);
 });

@@ -229,7 +229,7 @@ export default function App() {
 
           <section>
             <h2>4. Consent &amp; Submission</h2>
-            <label className="consent"><input type="checkbox" name="consent" checked={form.consent} onChange={update} required /><span>By participating in this survey and submitting your personal data, you consent to the collection, use, processing, and disclosure of your personal data for follow-up and advisory purposes.</span></label>
+            <label className="consent"><input type="checkbox" name="consent" checked={form.consent} onChange={update} required /><span>The information provided in this form will be collected, used and processed by Great Eastern Life Assurance (Malaysia) Berhad ("GELM") and Great Eastern General Insurance (Malaysia) Berhad ("GEGM") for the purpose of administereing the complimentary Person<span className="consent-question">Do you agree to the terms above? *</span></span></label>
           </section>
         </div>
 
