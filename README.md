@@ -118,7 +118,7 @@ It forwards only these keys to Apps Script, in this order:
 }
 ```
 
-The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, and ANP. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
+The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, and ANP. ANP is shown and required only when `On the spot close case` is `Yes`; it is cleared when the answer is `No`. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
 
 The frontend does not set a short request timeout or automatically retry. It disables submission immediately and also uses an in-flight guard against duplicate clicks. Values are cleared only after confirmed success and retained after failure.
 

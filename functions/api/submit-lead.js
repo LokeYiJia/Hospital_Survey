@@ -12,7 +12,7 @@ const REQUIRED_FIELDS = [
   "employmentType", "monthlyPersonalIncome",
 ];
 const OUTCOME_LIMITS = {
-  presentationDone: 3, potentialFollowUp: 3, onTheSpotCloseCase: 3, paDuration: 7, anp: 20,
+  presentationDone: 3, potentialFollowUp: 3, onTheSpotCloseCase: 3, paDuration: 7,
 };
 const ALLOWED = {
   roadshowLocation: [
@@ -147,6 +147,8 @@ function validateComplete(data) {
     if (!cleaned[field]) throw new Error(`Missing required field: ${field}`);
     if (cleaned[field].length > limit) throw new Error(`Field is too long: ${field}`);
   }
+  cleaned.anp = cleanText(data.anp);
+  if (cleaned.anp.length > 20) throw new Error("Field is too long: anp");
   if (![cleaned.presentationDone, cleaned.potentialFollowUp, cleaned.onTheSpotCloseCase]
     .every((value) => value === "Yes" || value === "No")) {
     throw new Error("Invalid Yes or No submission detail");
@@ -154,9 +156,10 @@ function validateComplete(data) {
   if (!["3 month", "6 month", "N/A"].includes(cleaned.paDuration)) {
     throw new Error("PA duration must be 3 month, 6 month, or N/A");
   }
-  if (!/^\d+(?:\.\d{1,2})?$/.test(cleaned.anp)) {
+  if (cleaned.onTheSpotCloseCase === "Yes" && !/^\d+(?:\.\d{1,2})?$/.test(cleaned.anp)) {
     throw new Error("ANP must be a number with no more than two decimal places");
   }
+  if (cleaned.onTheSpotCloseCase === "No") cleaned.anp = "";
   return { action: "complete", submissionId, ...cleaned };
 }
 

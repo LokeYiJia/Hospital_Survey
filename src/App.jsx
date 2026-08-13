@@ -36,11 +36,11 @@ const initialSubmissionDetails = {
   presentationDone: "", potentialFollowUp: "", onTheSpotCloseCase: "", paDuration: "", anp: "",
 };
 
-function ChoiceGroup({ legend, name, options, value, onChange, required = true }) {
+function ChoiceGroup({ legend, name, options, value, onChange, required = true, choicesClassName = "" }) {
   return (
     <fieldset className="choice-group">
       <legend>{legend} {required && <span aria-hidden="true">*</span>}</legend>
-      <div className="choices">
+      <div className={`choices ${choicesClassName}`.trim()}>
         {options.map((option) => (
           <label className="choice" key={option}>
             <input type="radio" name={name} value={option} checked={value === option} onChange={onChange} required={required} />
@@ -100,7 +100,11 @@ export default function App() {
   const updateSubmissionDetail = ({ target }) => {
     const { name, value } = target;
     if (status.message) setStatus({ type: "", message: "" });
-    setSubmissionDetails((current) => ({ ...current, [name]: value }));
+    setSubmissionDetails((current) => ({
+      ...current,
+      [name]: value,
+      ...(name === "onTheSpotCloseCase" && value === "No" ? { anp: "" } : {}),
+    }));
   };
 
   const request = async (payload) => {
@@ -157,7 +161,7 @@ export default function App() {
     event.preventDefault();
     if (submittingRef.current) return;
     const anp = submissionDetails.anp.trim();
-    if (!/^\d+(?:\.\d{1,2})?$/.test(anp)) {
+    if (submissionDetails.onTheSpotCloseCase === "Yes" && !/^\d+(?:\.\d{1,2})?$/.test(anp)) {
       setStatus({ type: "error", message: "ANP must be a number with no more than two decimal places." });
       return;
     }
@@ -248,8 +252,12 @@ export default function App() {
             <ChoiceGroup legend="Presentation done" name="presentationDone" options={["Yes", "No"]} value={submissionDetails.presentationDone} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="Potential follow up" name="potentialFollowUp" options={["Yes", "No"]} value={submissionDetails.potentialFollowUp} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="On the spot close case" name="onTheSpotCloseCase" options={["Yes", "No"]} value={submissionDetails.onTheSpotCloseCase} onChange={updateSubmissionDetail} />
-            <ChoiceGroup legend="3 month / 6 month PA?" name="paDuration" options={["3 month", "6 month", "N/A"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} />
-            <label className="field"><span>ANP *</span><input name="anp" value={submissionDetails.anp} onChange={updateSubmissionDetail} required pattern="[0-9]+(?:\.[0-9]{1,2})?" title="Enter a number with no more than two decimal places" maxLength="20" inputMode="decimal" placeholder="0.00" autoComplete="off" /></label>
+            <ChoiceGroup legend="3 month / 6 month PA?" name="paDuration" options={["3 month", "6 month", "N/A"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} choicesClassName="pa-duration-choices" />
+            {submissionDetails.onTheSpotCloseCase === "Yes" && (
+              <div className="conditional-field anp-subsection">
+                <label className="field"><span>ANP *</span><input name="anp" value={submissionDetails.anp} onChange={updateSubmissionDetail} required pattern="[0-9]+(?:\.[0-9]{1,2})?" title="Enter a number with no more than two decimal places" maxLength="20" inputMode="decimal" placeholder="0.00" autoComplete="off" /></label>
+              </div>
+            )}
             {status.message && <p className={`status ${status.type}`} role={status.type === "error" ? "alert" : "status"} aria-live="polite">{status.message}</p>}
             <div className="modal-actions"><button type="submit" disabled={submitting}>{submitting ? "Submitting…" : "Confirm & Submit"}</button></div>
           </form>

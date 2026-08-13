@@ -117,7 +117,7 @@ function sendAgentReports() {
         && values[20].trim() !== ""
         && values[21].trim() !== ""
         && values[22].trim() !== ""
-        && values[23].trim() !== "";
+        && (values[21].trim() === "No" || values[23].trim() !== "");
 
       if (alreadySent) return;
       if (!completed) {
@@ -298,9 +298,10 @@ function validateOutcomes_(data) {
     throw new Error("PA duration must be 3 month, 6 month, or N/A");
   }
   var anp = data.anp == null ? "" : String(data.anp).trim();
-  if (!/^\d+(?:\.\d{1,2})?$/.test(anp)) {
+  if (data.onTheSpotCloseCase === "Yes" && !/^\d+(?:\.\d{1,2})?$/.test(anp)) {
     throw new Error("ANP must be a number with no more than two decimal places");
   }
+  if (data.onTheSpotCloseCase === "No") data.anp = "";
 }
 
 function verifyHeaders_(sheet) {

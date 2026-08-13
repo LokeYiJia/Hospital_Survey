@@ -17,7 +17,7 @@ const validCreate = () => ({
 });
 const validComplete = () => ({
   action: "complete", submissionId, presentationDone: "Yes", potentialFollowUp: "No",
-  onTheSpotCloseCase: "No", paDuration: "3 month", anp: "1200.50",
+  onTheSpotCloseCase: "Yes", paDuration: "3 month", anp: "1200.50",
 });
 const requestFor = (body, options = {}) => new Request("https://survey.example/api/submit-lead", {
   method: options.method || "POST",
@@ -82,6 +82,20 @@ test("accepts N/A for PA duration", async (t) => {
   const response = await onRequest({ request: requestFor(payload), env });
   assert.equal(response.status, 200);
   assert.deepEqual(forwarded, payload);
+});
+
+test("allows blank ANP when there is no on-the-spot close", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let forwarded;
+  globalThis.fetch = async (_url, init) => {
+    forwarded = JSON.parse(init.body);
+    return Response.json({ success: true });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const payload = { ...validComplete(), onTheSpotCloseCase: "No", anp: "" };
+  const response = await onRequest({ request: requestFor(payload), env });
+  assert.equal(response.status, 200);
+  assert.equal(forwarded.anp, "");
 });
 
 test("rejects invalid state, popup answers, and ANP", async () => {
