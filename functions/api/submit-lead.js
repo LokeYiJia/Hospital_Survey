@@ -16,7 +16,7 @@ const OUTCOME_LIMITS = {
 };
 const ALLOWED = {
   roadshowLocation: [
-    "Gleneagles",
+    "Gleneagles Hospital",
     "Mahkota Medical Center",
     "KPJ Specialist Hospital",
     "Sunway Medical Center",
@@ -151,8 +151,8 @@ function validateComplete(data) {
     .every((value) => value === "Yes" || value === "No")) {
     throw new Error("Invalid Yes or No submission detail");
   }
-  if (cleaned.paDuration !== "3 month" && cleaned.paDuration !== "6 month") {
-    throw new Error("PA duration must be 3 month or 6 month");
+  if (!["3 month", "6 month", "N/A"].includes(cleaned.paDuration)) {
+    throw new Error("PA duration must be 3 month, 6 month, or N/A");
   }
   if (!/^\d+(?:\.\d{1,2})?$/.test(cleaned.anp)) {
     throw new Error("ANP must be a number with no more than two decimal places");

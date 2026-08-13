@@ -7,7 +7,7 @@ import { onRequest } from "../functions/api/submit-lead.js";
 const submissionId = "123e4567-e89b-12d3-a456-426614174000";
 const env = { GOOGLE_SHEETS_WEBHOOK_URL: "https://script.google.test/web-app" };
 const validCreate = () => ({
-  action: "create", date: "2026-08-07", roadshowLocation: " Gleneagles ",
+  action: "create", date: "2026-08-07", roadshowLocation: " Gleneagles Hospital ",
   roadshowState: "Kuala Lumpur", fullName: " Alex Tan ", emailAddress: " alex@example.com ", mobileNumber: "+60 12 345 6789",
   icNumber: "0304150704063", agentName: "Test Agent", agentId: "GE123", agentEmail: "agent@example.com", gmName: "Test GM",
   currentInsuranceCompany: "Prudential", ageBand: "25-34", maritalStatus: "Single",
@@ -48,7 +48,7 @@ test("creates a lead and forwards the GE fields in order", async (t) => {
     "maritalStatus", "employmentType", "monthlyPersonalIncome", "existingInsurancePlans",
     "financialPriorities", "agreedToTerms",
   ]);
-  assert.equal(forwarded.roadshowLocation, "Gleneagles");
+  assert.equal(forwarded.roadshowLocation, "Gleneagles Hospital");
   assert.equal(forwarded.emailAddress, "alex@example.com");
   assert.equal(forwarded.agentEmail, "agent@example.com");
   assert.equal(forwarded.icNumber, "0304150704063");
@@ -68,6 +68,20 @@ test("completes the same lead with only the popup fields", async (t) => {
   const response = await onRequest({ request: requestFor(validComplete()), env });
   assert.equal(response.status, 200);
   assert.deepEqual(forwarded, validComplete());
+});
+
+test("accepts N/A for PA duration", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let forwarded;
+  globalThis.fetch = async (_url, init) => {
+    forwarded = JSON.parse(init.body);
+    return Response.json({ success: true });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const payload = { ...validComplete(), paDuration: "N/A" };
+  const response = await onRequest({ request: requestFor(payload), env });
+  assert.equal(response.status, 200);
+  assert.deepEqual(forwarded, payload);
 });
 
 test("rejects invalid state, popup answers, and ANP", async () => {

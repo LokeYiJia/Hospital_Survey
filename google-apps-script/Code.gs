@@ -294,8 +294,8 @@ function validateOutcomes_(data) {
   ["presentationDone", "potentialFollowUp", "onTheSpotCloseCase"].forEach(function (key) {
     if (data[key] !== "Yes" && data[key] !== "No") throw new Error(key + " must be Yes or No");
   });
-  if (data.paDuration !== "3 month" && data.paDuration !== "6 month") {
-    throw new Error("PA duration must be 3 month or 6 month");
+  if (["3 month", "6 month", "N/A"].indexOf(data.paDuration) === -1) {
+    throw new Error("PA duration must be 3 month, 6 month, or N/A");
   }
   var anp = data.anp == null ? "" : String(data.anp).trim();
   if (!/^\d+(?:\.\d{1,2})?$/.test(anp)) {
