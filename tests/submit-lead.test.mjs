@@ -9,7 +9,7 @@ const env = { GOOGLE_SHEETS_WEBHOOK_URL: "https://script.google.test/web-app" };
 const validCreate = () => ({
   action: "create", date: "2026-08-07", roadshowLocation: " Gleneagles Hospital ",
   roadshowState: "Kuala Lumpur", fullName: " Alex Tan ", emailAddress: " alex@example.com ", mobileNumber: "+60 12 345 6789",
-  icNumber: "0304150704063", agentName: "Test Agent", agentId: "GE123", agentEmail: "agent@example.com", gmName: "Test GM",
+  agentName: "Test Agent", agentId: "GE123", agentEmail: "agent@example.com", gmName: "Test GM",
   currentInsuranceCompany: "Prudential", ageBand: "25-34", maritalStatus: "Single",
   employmentType: "Salaried", monthlyPersonalIncome: "RM3-6k",
   existingInsurancePlans: ["Medical Card"], financialPriorities: ["Build emergency fund"],
@@ -17,7 +17,7 @@ const validCreate = () => ({
 });
 const validComplete = () => ({
   action: "complete", submissionId, presentationDone: "Yes", potentialFollowUp: "No",
-  onTheSpotCloseCase: "Yes", paDuration: "3 month", anp: "1200.50",
+  onTheSpotCloseCase: "Yes", paDuration: "3 month", anp: "1200.50", icNumber: "0304150704063",
 });
 const requestFor = (body, options = {}) => new Request("https://survey.example/api/submit-lead", {
   method: options.method || "POST",
@@ -51,7 +51,7 @@ test("creates a lead and forwards the GE fields in order", async (t) => {
   assert.equal(forwarded.roadshowLocation, "Gleneagles Hospital");
   assert.equal(forwarded.emailAddress, "alex@example.com");
   assert.equal(forwarded.agentEmail, "agent@example.com");
-  assert.equal(forwarded.icNumber, "0304150704063");
+  assert.equal(forwarded.icNumber, "");
   assert.equal(forwarded.agreedToTerms, "Yes");
   assert.equal("consent" in forwarded, false);
   assert.equal("participantType" in forwarded, false);
@@ -96,6 +96,20 @@ test("allows blank ANP when there is no on-the-spot close", async (t) => {
   const response = await onRequest({ request: requestFor(payload), env });
   assert.equal(response.status, 200);
   assert.equal(forwarded.anp, "");
+});
+
+test("allows the optional popup IC number to be blank", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let forwarded;
+  globalThis.fetch = async (_url, init) => {
+    forwarded = JSON.parse(init.body);
+    return Response.json({ success: true });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const payload = { ...validComplete(), icNumber: "" };
+  const response = await onRequest({ request: requestFor(payload), env });
+  assert.equal(response.status, 200);
+  assert.equal(forwarded.icNumber, "");
 });
 
 test("rejects invalid state, popup answers, and ANP", async () => {

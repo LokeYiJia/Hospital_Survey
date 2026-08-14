@@ -8,7 +8,7 @@ const FIELD_LIMITS = {
 };
 const REQUIRED_FIELDS = [
   "date", "roadshowLocation", "roadshowState", "fullName", "emailAddress", "mobileNumber",
-  "icNumber", "agentName", "agentId", "agentEmail", "gmName", "ageBand", "maritalStatus",
+  "agentName", "agentId", "agentEmail", "gmName", "ageBand", "maritalStatus",
   "employmentType", "monthlyPersonalIncome",
 ];
 const OUTCOME_LIMITS = {
@@ -91,7 +91,7 @@ function validateCreate(data) {
   if (!/^\+?[0-9 ]+$/.test(cleaned.mobileNumber) || phoneDigits.length < 7 || phoneDigits.length > 15) {
     throw new Error("Invalid mobile number");
   }
-  if (!/^[A-Za-z0-9 -]+$/.test(cleaned.icNumber)) {
+  if (cleaned.icNumber && !/^[A-Za-z0-9 -]+$/.test(cleaned.icNumber)) {
     throw new Error("IC number may contain letters, numbers, spaces, and hyphens only");
   }
   if (!validDate(cleaned.date)) throw new Error("Invalid date");
@@ -149,6 +149,11 @@ function validateComplete(data) {
   }
   cleaned.anp = cleanText(data.anp);
   if (cleaned.anp.length > 20) throw new Error("Field is too long: anp");
+  cleaned.icNumber = cleanText(data.icNumber);
+  if (cleaned.icNumber.length > 30) throw new Error("Field is too long: icNumber");
+  if (cleaned.icNumber && !/^[A-Za-z0-9 -]+$/.test(cleaned.icNumber)) {
+    throw new Error("IC number may contain letters, numbers, spaces, and hyphens only");
+  }
   if (![cleaned.presentationDone, cleaned.potentialFollowUp, cleaned.onTheSpotCloseCase]
     .every((value) => value === "Yes" || value === "No")) {
     throw new Error("Invalid Yes or No submission detail");

@@ -1,5 +1,5 @@
 var SHEET_NAME = "GDev Leads Gathering";
-var SCRIPT_BUILD = "2026-08-13-agreed-to-terms-v1";
+var SCRIPT_BUILD = "2026-08-14-popup-ic-v1";
 var EXPECTED_HEADERS = [
   "Date", "Roadshow Location", "Roadshow State", "Full Name", "Email Address", "Mobile Number",
   "IC Number", "Agent Name", "Agent ID", "Agent Email", "GM Name",
@@ -84,6 +84,7 @@ function completeSubmission_(sheet, data) {
     .createTextFinder(submissionId).matchEntireCell(true).findNext();
   if (!idCell) throw new Error("Submission not found");
   var outcomes = OUTCOME_COLUMN_KEYS.map(function (key) { return safeCell_(data[key]); });
+  sheet.getRange(idCell.getRow(), 7).setNumberFormat("@").setValue(forcedTextCell_(data.icNumber));
   sheet.getRange(idCell.getRow(), 20, 1, outcomes.length).setValues([outcomes]);
   SpreadsheetApp.flush();
   return jsonResponse_({ success: true });
@@ -302,6 +303,12 @@ function validateOutcomes_(data) {
     throw new Error("ANP must be a number with no more than two decimal places");
   }
   if (data.onTheSpotCloseCase === "No") data.anp = "";
+  var icNumber = data.icNumber == null ? "" : String(data.icNumber).trim();
+  if (icNumber.length > 30) throw new Error("IC number is too long");
+  if (icNumber && !/^[A-Za-z0-9 -]+$/.test(icNumber)) {
+    throw new Error("IC number may contain letters, numbers, spaces, and hyphens only");
+  }
+  data.icNumber = icNumber;
 }
 
 function verifyHeaders_(sheet) {

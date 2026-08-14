@@ -73,7 +73,7 @@ Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have 
 26. Submission ID
 27. Email Sent Timestamp
 
-Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the 18 lead fields, `Agreed to Terms`, five blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates the five outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
+Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the lead fields with a blank `IC Number`, `Agreed to Terms`, five blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID, writes the optional IC number into column 7, and updates the five outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
 
 When the spreadsheet is opened, Apps Script adds **Agent Reports > Send unsent agent reports** to the Google Sheets menu. The command groups completed rows with a blank `Email Sent Timestamp` by `Agent Email`, sends one combined table with one row per lead to each unique agent, and timestamps every included Sheet row. Rows with incomplete popup answers or invalid agent email addresses are skipped. IC numbers are masked in the report.
 
@@ -118,7 +118,7 @@ It forwards only these keys to Apps Script, in this order:
 }
 ```
 
-The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, and ANP. ANP is shown and required only when `On the spot close case` is `Yes`; it is cleared when the answer is `No`. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
+The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, conditional ANP, and optional IC number. ANP is shown and required only when `On the spot close case` is `Yes`; it is cleared when the answer is `No`. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
 
 The frontend does not set a short request timeout or automatically retry. It disables submission immediately and also uses an in-flight guard against duplicate clicks. Values are cleared only after confirmed success and retained after failure.
 
