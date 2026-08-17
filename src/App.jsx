@@ -199,10 +199,10 @@ export default function App() {
           <section>
             <h2>1. Personal Details</h2>
             <div className="field-grid">
-              <label className="field full-width"><span>Full Name (as per NRIC) *</span><input name="fullName" value={form.fullName} onChange={update} required maxLength="150" autoComplete="off" /></label>
+              <label className="field"><span>Full Name (as per NRIC) *</span><input name="fullName" value={form.fullName} onChange={update} required maxLength="150" autoComplete="off" /></label>
+              <label className="field"><span>IC Number *</span><input name="icNumber" value={form.icNumber} onChange={update} required pattern="[A-Za-z0-9 -]+" title="Use letters, numbers, spaces, or hyphens" maxLength="30" inputMode="text" autoComplete="off" /></label>
               <label className="field"><span>Email Address *</span><input name="emailAddress" type="email" value={form.emailAddress} onChange={update} required maxLength="254" inputMode="email" autoComplete="off" /></label>
               <label className="field"><span>Mobile Number *</span><input name="mobileNumber" type="tel" value={form.mobileNumber} onChange={update} required pattern="[+0-9 ]+" title="Use only numbers, spaces, and +" maxLength="30" inputMode="tel" autoComplete="off" /></label>
-              <label className="field"><span>IC Number *</span><input name="icNumber" value={form.icNumber} onChange={update} required pattern="[A-Za-z0-9 -]+" title="Use letters, numbers, spaces, or hyphens" maxLength="30" inputMode="text" autoComplete="off" /></label>
               <label className="field full-width"><span>Current Insurance Company</span><input name="currentInsuranceCompany" value={form.currentInsuranceCompany} onChange={update} maxLength="150" placeholder="If applicable" autoComplete="off" /></label>
             </div>
           </section>
