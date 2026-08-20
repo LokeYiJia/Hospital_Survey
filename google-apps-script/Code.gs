@@ -107,23 +107,13 @@ function sendAgentReports() {
 
     var rows = sheet.getRange(2, 1, lastRow - 1, EXPECTED_HEADERS.length).getDisplayValues();
     var groups = {};
-    var incompleteCount = 0;
     var invalidEmailCount = 0;
 
     rows.forEach(function (values, index) {
       var sheetRow = index + 2;
       var alreadySent = values[26].trim() !== "";
-      var completed = values[19].trim() !== ""
-        && values[20].trim() !== ""
-        && values[21].trim() !== ""
-        && values[22].trim() !== ""
-        && (values[21].trim() === "No" || values[23].trim() !== "");
 
       if (alreadySent) return;
-      if (!completed) {
-        incompleteCount++;
-        return;
-      }
 
       var agentEmail = values[9].trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(agentEmail)) {
@@ -139,8 +129,8 @@ function sendAgentReports() {
     if (recipients.length === 0) {
       ui.alert(
         "Agent Reports",
-        "No completed, unsent submissions were found."
-          + formatSkippedRows_(incompleteCount, invalidEmailCount),
+        "No unsent submissions with a valid Agent Email were found."
+          + formatSkippedRows_(invalidEmailCount),
         ui.ButtonSet.OK
       );
       return;
@@ -179,7 +169,7 @@ function sendAgentReports() {
     ui.alert(
       "Agent Reports Sent",
       "Sent " + recipients.length + " agent email(s) containing " + totalLeads + " lead(s)."
-        + formatSkippedRows_(incompleteCount, invalidEmailCount),
+        + formatSkippedRows_(invalidEmailCount),
       ui.ButtonSet.OK
     );
   } catch (error) {
@@ -283,9 +273,8 @@ function escapeHtml_(value) {
     .replace(/'/g, "&#39;");
 }
 
-function formatSkippedRows_(incompleteCount, invalidEmailCount) {
+function formatSkippedRows_(invalidEmailCount) {
   var messages = [];
-  if (incompleteCount) messages.push(incompleteCount + " incomplete row(s) skipped");
   if (invalidEmailCount) messages.push(invalidEmailCount + " row(s) with invalid Agent Email skipped");
   return messages.length ? "\n\n" + messages.join("; ") + "." : "";
 }

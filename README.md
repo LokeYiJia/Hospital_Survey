@@ -75,7 +75,7 @@ Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have 
 
 Apps Script verifies row 1 without modifying it and uses a script-wide lock. The first submit appends the required `IC Number` with the other lead fields, `Agreed to Terms`, five blank outcome cells, a timestamp, and a UUID. The popup submit finds that UUID and updates the five outcome cells in the same row. It does not send an individual email. `Submission ID` and `Email Sent Timestamp` can be hidden but must not be deleted.
 
-When the spreadsheet is opened, Apps Script adds **Agent Reports > Send unsent agent reports** to the Google Sheets menu. The command groups completed rows with a blank `Email Sent Timestamp` by `Agent Email`, sends one combined table with one row per lead to each unique agent, and timestamps every included Sheet row. Rows with incomplete popup answers or invalid agent email addresses are skipped. IC numbers are masked in the report.
+When the spreadsheet is opened, Apps Script adds **Agent Reports > Send unsent agent reports** to the Google Sheets menu. The command selects rows with a blank `Email Sent Timestamp`, groups them by `Agent Email`, sends one combined table with one row per lead to each unique agent, and timestamps every included Sheet row. Popup answers may be incomplete or blank. Rows without a valid Agent Email are skipped because they cannot be delivered. IC numbers are masked in the report.
 
 ## Google Apps Script deployment
 
