@@ -52,10 +52,10 @@ function ChoiceGroup({ legend, name, options, value, onChange, required = true, 
   );
 }
 
-function CheckboxGroup({ legend, name, options, values, onChange }) {
+function CheckboxGroup({ legend, name, options, values, onChange, required = true }) {
   return (
     <fieldset className="choice-group">
-      <legend>{legend} <span aria-hidden="true">*</span></legend>
+      <legend>{legend} {required && <span aria-hidden="true">*</span>}</legend>
       <div className="choices checkbox-grid">
         {options.map((option) => (
           <label className="choice" key={option}>
@@ -123,10 +123,6 @@ export default function App() {
   const createSubmission = async (event) => {
     event.preventDefault();
     if (submittingRef.current) return;
-    if (!form.existingInsurancePlans.length || !form.financialPriorities.length) {
-      setStatus({ type: "error", message: "Select at least one insurance plan and one financial priority." });
-      return;
-    }
     if (form.employmentType === "Others" && !form.employmentTypeOther.trim()) {
       setStatus({ type: "error", message: "Please specify your employment type." });
       return;
@@ -209,13 +205,13 @@ export default function App() {
 
           <section>
             <h2>2. Your Profile</h2>
-            <ChoiceGroup legend="Age Band" name="ageBand" options={AGE_BANDS} value={form.ageBand} onChange={update} />
-            <ChoiceGroup legend="Marital Status" name="maritalStatus" options={MARITAL_STATUSES} value={form.maritalStatus} onChange={update} />
-            <ChoiceGroup legend="Employment Type" name="employmentType" options={EMPLOYMENT_TYPES} value={form.employmentType} onChange={update} />
+            <ChoiceGroup legend="Age Band" name="ageBand" options={AGE_BANDS} value={form.ageBand} onChange={update} required={false} />
+            <ChoiceGroup legend="Marital Status" name="maritalStatus" options={MARITAL_STATUSES} value={form.maritalStatus} onChange={update} required={false} />
+            <ChoiceGroup legend="Employment Type" name="employmentType" options={EMPLOYMENT_TYPES} value={form.employmentType} onChange={update} required={false} />
             {form.employmentType === "Others" && <label className="field conditional-field"><span>Please specify *</span><input name="employmentTypeOther" value={form.employmentTypeOther} onChange={update} required maxLength="100" autoComplete="off" /></label>}
-            <ChoiceGroup legend="Monthly Personal Income" name="monthlyPersonalIncome" options={INCOME_BANDS} value={form.monthlyPersonalIncome} onChange={update} />
-            <CheckboxGroup legend="Existing Insurance Plans" name="existingInsurancePlans" options={INSURANCE_PLANS} values={form.existingInsurancePlans} onChange={updateArray} />
-            <CheckboxGroup legend="Financial Priorities in the next 12 months" name="financialPriorities" options={FINANCIAL_PRIORITIES} values={form.financialPriorities} onChange={updateArray} />
+            <ChoiceGroup legend="Monthly Personal Income" name="monthlyPersonalIncome" options={INCOME_BANDS} value={form.monthlyPersonalIncome} onChange={update} required={false} />
+            <CheckboxGroup legend="Existing Insurance Plans" name="existingInsurancePlans" options={INSURANCE_PLANS} values={form.existingInsurancePlans} onChange={updateArray} required={false} />
+            <CheckboxGroup legend="Financial Priorities in the next 12 months" name="financialPriorities" options={FINANCIAL_PRIORITIES} values={form.financialPriorities} onChange={updateArray} required={false} />
           </section>
 
           <section>

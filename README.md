@@ -89,7 +89,7 @@ Every Apps Script code change requires a **new Web App deployment version** (or 
 
 ## Submission contract
 
-The Pages Function accepts only `POST` with `application/json`, limits request size, trims text, and validates the GE question set, required checkbox groups, consent, the three Yes/No popup fields, the PA duration choice, and numeric ANP.
+The Pages Function accepts only `POST` with `application/json`, limits request size, trims text, and validates the GE question set, consent, the three Yes/No popup fields, the PA duration choice, and numeric ANP. All fields in **2. Your Profile** are optional; any supplied selections are still checked against their allowlists. Selecting `Others` for Employment Type still requires the accompanying description.
 
 It forwards only these keys to Apps Script, in this order:
 

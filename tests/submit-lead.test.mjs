@@ -110,9 +110,47 @@ test("rejects invalid state, popup answers, and ANP", async () => {
   assert.match((await response.json()).error, /ANP must be a number/i);
 });
 
-test("requires checkbox selections and consent", async () => {
+test("requires consent", async () => {
   const response = await onRequest({
     request: requestFor({ ...validCreate(), existingInsurancePlans: [], consent: false }), env,
+  });
+  assert.equal(response.status, 400);
+});
+
+test("allows every profile question to be left blank", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let forwarded;
+  globalThis.fetch = async (_url, init) => {
+    forwarded = JSON.parse(init.body);
+    return Response.json({ success: true, submissionId });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+
+  const response = await onRequest({
+    request: requestFor({
+      ...validCreate(),
+      ageBand: "",
+      maritalStatus: "",
+      employmentType: "",
+      monthlyPersonalIncome: "",
+      existingInsurancePlans: [],
+      financialPriorities: [],
+    }),
+    env,
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(forwarded.ageBand, "");
+  assert.equal(forwarded.maritalStatus, "");
+  assert.equal(forwarded.employmentType, "");
+  assert.equal(forwarded.monthlyPersonalIncome, "");
+  assert.equal(forwarded.existingInsurancePlans, "");
+  assert.equal(forwarded.financialPriorities, "");
+});
+
+test("rejects invalid profile values when supplied", async () => {
+  const response = await onRequest({
+    request: requestFor({ ...validCreate(), ageBand: "Unknown" }), env,
   });
   assert.equal(response.status, 400);
 });

@@ -8,8 +8,7 @@ const FIELD_LIMITS = {
 };
 const REQUIRED_FIELDS = [
   "date", "roadshowLocation", "roadshowState", "fullName", "emailAddress", "mobileNumber",
-  "icNumber", "agentName", "agentId", "agentEmail", "gmName", "ageBand", "maritalStatus",
-  "employmentType", "monthlyPersonalIncome",
+  "icNumber", "agentName", "agentId", "agentEmail", "gmName",
 ];
 const OUTCOME_LIMITS = {
   presentationDone: 3, potentialFollowUp: 3, onTheSpotCloseCase: 3, paDuration: 7,
@@ -68,6 +67,13 @@ function cleanAllowedArray(value, allowed) {
   return cleaned.every((item) => allowed.includes(item)) ? cleaned : null;
 }
 
+function cleanOptionalAllowedArray(value, allowed) {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value)) return null;
+  if (value.length === 0) return [];
+  return cleanAllowedArray(value, allowed);
+}
+
 function validateCreate(data) {
   const cleaned = Object.fromEntries(
     Object.keys(FIELD_LIMITS).map((field) => [field, cleanText(data[field])]),
@@ -97,19 +103,19 @@ function validateCreate(data) {
   if (!validDate(cleaned.date)) throw new Error("Invalid date");
   if (!ALLOWED.roadshowLocation.includes(cleaned.roadshowLocation)) throw new Error("Invalid roadshow location");
   if (!ALLOWED.roadshowState.includes(cleaned.roadshowState)) throw new Error("Invalid roadshow state");
-  if (!ALLOWED.ageBand.includes(cleaned.ageBand)
-    || !ALLOWED.maritalStatus.includes(cleaned.maritalStatus)
-    || !ALLOWED.monthlyPersonalIncome.includes(cleaned.monthlyPersonalIncome)) {
+  if ((cleaned.ageBand && !ALLOWED.ageBand.includes(cleaned.ageBand))
+    || (cleaned.maritalStatus && !ALLOWED.maritalStatus.includes(cleaned.maritalStatus))
+    || (cleaned.monthlyPersonalIncome && !ALLOWED.monthlyPersonalIncome.includes(cleaned.monthlyPersonalIncome))) {
     throw new Error("Invalid profile selection");
   }
-  const standardEmployment = ALLOWED.employmentType.includes(cleaned.employmentType);
+  const standardEmployment = !cleaned.employmentType || ALLOWED.employmentType.includes(cleaned.employmentType);
   const otherEmployment = cleaned.employmentType.startsWith("Others: ")
     && cleaned.employmentType.slice(8).trim().length > 0;
   if (!standardEmployment && !otherEmployment) throw new Error("Invalid employment type");
 
-  const plans = cleanAllowedArray(data.existingInsurancePlans, ALLOWED.existingInsurancePlans);
-  const priorities = cleanAllowedArray(data.financialPriorities, ALLOWED.financialPriorities);
-  if (!plans || !priorities) throw new Error("Invalid or missing checkbox selection");
+  const plans = cleanOptionalAllowedArray(data.existingInsurancePlans, ALLOWED.existingInsurancePlans);
+  const priorities = cleanOptionalAllowedArray(data.financialPriorities, ALLOWED.financialPriorities);
+  if (!plans || !priorities) throw new Error("Invalid checkbox selection");
 
   return {
     action: "create",
