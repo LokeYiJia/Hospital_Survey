@@ -33,7 +33,7 @@ const initialForm = {
 };
 
 const initialSubmissionDetails = {
-  presentationDone: "", potentialFollowUp: "", onTheSpotCloseCase: "", paDuration: "", anp: "",
+  presentationDone: "", potentialFollowUp: "", onTheSpotCloseCase: "", paDuration: "", remarks: "", anp: "",
 };
 
 function ChoiceGroup({ legend, name, options, value, onChange, required = true, choicesClassName = "" }) {
@@ -249,6 +249,7 @@ export default function App() {
             <ChoiceGroup legend="Potential follow up" name="potentialFollowUp" options={["Yes", "No"]} value={submissionDetails.potentialFollowUp} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="On the spot close case" name="onTheSpotCloseCase" options={["Yes", "No"]} value={submissionDetails.onTheSpotCloseCase} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="3 month / 6 month PA?" name="paDuration" options={["3 month", "6 month", "N/A"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} choicesClassName="pa-duration-choices" />
+            <label className="field remarks-field"><span>Remarks</span><textarea name="remarks" value={submissionDetails.remarks} onChange={updateSubmissionDetail} maxLength="500" rows="4" placeholder="Optional" autoComplete="off" /></label>
             {submissionDetails.onTheSpotCloseCase === "Yes" && (
               <div className="conditional-field anp-subsection">
                 <label className="field"><span>ANP *</span><input name="anp" value={submissionDetails.anp} onChange={updateSubmissionDetail} required pattern="[0-9]+(?:\.[0-9]{1,2})?" title="Enter a number with no more than two decimal places" maxLength="20" inputMode="decimal" placeholder="0.00" autoComplete="off" /></label>

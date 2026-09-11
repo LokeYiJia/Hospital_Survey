@@ -17,7 +17,7 @@ const validCreate = () => ({
 });
 const validComplete = () => ({
   action: "complete", submissionId, presentationDone: "Yes", potentialFollowUp: "No",
-  onTheSpotCloseCase: "Yes", paDuration: "3 month", anp: "1200.50",
+  onTheSpotCloseCase: "Yes", paDuration: "3 month", remarks: "Interested in medical coverage", anp: "1200.50",
 });
 const requestFor = (body, options = {}) => new Request("https://survey.example/api/submit-lead", {
   method: options.method || "POST",
@@ -98,6 +98,21 @@ test("allows blank ANP when there is no on-the-spot close", async (t) => {
   assert.equal(forwarded.anp, "");
 });
 
+test("allows Remarks to be omitted", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let forwarded;
+  globalThis.fetch = async (_url, init) => {
+    forwarded = JSON.parse(init.body);
+    return Response.json({ success: true });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const payload = validComplete();
+  delete payload.remarks;
+  const response = await onRequest({ request: requestFor(payload), env });
+  assert.equal(response.status, 200);
+  assert.equal(forwarded.remarks, "");
+});
+
 test("rejects invalid state, popup answers, and ANP", async () => {
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), emailAddress: "not-an-email" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), agentEmail: "not-an-email" }), env })).status, 400);
@@ -105,6 +120,7 @@ test("rejects invalid state, popup answers, and ANP", async () => {
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), roadshowState: "Sabah" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), presentationDone: "Maybe" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), paDuration: "12 month" }), env })).status, 400);
+  assert.equal((await onRequest({ request: requestFor({ ...validComplete(), remarks: "x".repeat(501) }), env })).status, 400);
   const response = await onRequest({ request: requestFor({ ...validComplete(), anp: "RM 1,200" }), env });
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /ANP must be a number/i);

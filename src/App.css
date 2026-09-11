@@ -118,7 +118,8 @@ h2 {
 .field { display: grid; gap: 7px; font-weight: 700; }
 
 .field input,
-.field select {
+.field select,
+.field textarea {
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
@@ -126,6 +127,11 @@ h2 {
   border: 1px solid #8b98a8;
   border-radius: 3px;
   background: #fff;
+}
+
+.field textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 
 .field select { appearance: auto; }

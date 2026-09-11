@@ -1,12 +1,12 @@
 var SHEET_NAME = "GDev Leads Gathering";
-var SCRIPT_BUILD = "2026-08-17-required-ic-v1";
+var SCRIPT_BUILD = "2026-09-11-popup-remarks-v1";
 var EXPECTED_HEADERS = [
   "Date", "Roadshow Location", "Roadshow State", "Full Name", "Email Address", "Mobile Number",
   "IC Number", "Agent Name", "Agent ID", "Agent Email", "GM Name",
   "Current Insurance Company", "Age Band", "Marital Status", "Employment Type",
   "Monthly Income", "Existing Insurance Plan",
   "Financial Priorities in the next 12 months", "Agreed to Terms", "Presentation done",
-  "Potential follow up", "On the spot close case", "3 month / 6 month PA?", "ANP",
+  "Potential follow up", "On the spot close case", "3 month / 6 month PA?", "Remarks", "ANP",
   "Submission Timestamp", "Submission ID", "Email Sent Timestamp"
 ];
 var BASE_COLUMN_KEYS = [
@@ -16,7 +16,7 @@ var BASE_COLUMN_KEYS = [
   "existingInsurancePlans", "financialPriorities", "agreedToTerms"
 ];
 var OUTCOME_COLUMN_KEYS = [
-  "presentationDone", "potentialFollowUp", "onTheSpotCloseCase", "paDuration", "anp"
+  "presentationDone", "potentialFollowUp", "onTheSpotCloseCase", "paDuration", "remarks", "anp"
 ];
 
 function onOpen() {
@@ -67,7 +67,7 @@ function createSubmission_(sheet, data) {
   sheet.getRange(targetRow, 6).setNumberFormat("@");
   sheet.getRange(targetRow, 7).setNumberFormat("@");
   sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
-  sheet.getRange(targetRow, 25).setNumberFormat("yyyy-mm-dd hh:mm:ss");
+  sheet.getRange(targetRow, 26).setNumberFormat("yyyy-mm-dd hh:mm:ss");
   SpreadsheetApp.flush();
   return jsonResponse_({ success: true, submissionId: submissionId });
 }
@@ -80,7 +80,7 @@ function completeSubmission_(sheet, data) {
   validateOutcomes_(data);
   var rowCount = sheet.getLastRow() - 1;
   if (rowCount < 1) throw new Error("Submission not found");
-  var idCell = sheet.getRange(2, 26, rowCount, 1)
+  var idCell = sheet.getRange(2, 27, rowCount, 1)
     .createTextFinder(submissionId).matchEntireCell(true).findNext();
   if (!idCell) throw new Error("Submission not found");
   var outcomes = OUTCOME_COLUMN_KEYS.map(function (key) { return safeCell_(data[key]); });
@@ -111,7 +111,7 @@ function sendAgentReports() {
 
     rows.forEach(function (values, index) {
       var sheetRow = index + 2;
-      var alreadySent = values[26].trim() !== "";
+      var alreadySent = values[27].trim() !== "";
 
       if (alreadySent) return;
 
@@ -158,7 +158,7 @@ function sendAgentReports() {
       });
 
       leads.forEach(function (lead) {
-        sheet.getRange(lead.rowNumber, 27)
+        sheet.getRange(lead.rowNumber, 28)
           .setValue(sentAt)
           .setNumberFormat("yyyy-mm-dd hh:mm:ss");
       });
@@ -209,8 +209,9 @@ function buildAgentReport_(agentEmail, leads) {
     { label: "Potential follow up", value: function (values) { return values[20]; } },
     { label: "On the spot close case", value: function (values) { return values[21]; } },
     { label: "3 month / 6 month PA?", value: function (values) { return values[22]; } },
-    { label: "ANP", value: function (values) { return values[23]; } },
-    { label: "Submission Timestamp", value: function (values) { return values[24]; } }
+    { label: "Remarks", value: function (values) { return values[23]; } },
+    { label: "ANP", value: function (values) { return values[24]; } },
+    { label: "Submission Timestamp", value: function (values) { return values[25]; } }
   ];
   var textLines = [
     "Hello,",
@@ -286,6 +287,9 @@ function validateOutcomes_(data) {
   if (["3 month", "6 month", "N/A"].indexOf(data.paDuration) === -1) {
     throw new Error("PA duration must be 3 month, 6 month, or N/A");
   }
+  var remarks = data.remarks == null ? "" : String(data.remarks).trim();
+  if (remarks.length > 500) throw new Error("Remarks must not exceed 500 characters");
+  data.remarks = remarks;
   var anp = data.anp == null ? "" : String(data.anp).trim();
   if (data.onTheSpotCloseCase === "Yes" && !/^\d+(?:\.\d{1,2})?$/.test(anp)) {
     throw new Error("ANP must be a number with no more than two decimal places");

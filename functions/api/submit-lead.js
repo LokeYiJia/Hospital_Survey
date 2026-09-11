@@ -153,6 +153,8 @@ function validateComplete(data) {
     if (!cleaned[field]) throw new Error(`Missing required field: ${field}`);
     if (cleaned[field].length > limit) throw new Error(`Field is too long: ${field}`);
   }
+  cleaned.remarks = cleanText(data.remarks);
+  if (cleaned.remarks.length > 500) throw new Error("Field is too long: remarks");
   cleaned.anp = cleanText(data.anp);
   if (cleaned.anp.length > 20) throw new Error("Field is too long: anp");
   if (![cleaned.presentationDone, cleaned.potentialFollowUp, cleaned.onTheSpotCloseCase]
