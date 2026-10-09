@@ -1,5 +1,6 @@
-var SHEET_NAME = "GDev Leads Gathering";
-var SCRIPT_BUILD = "2026-09-11-popup-remarks-v1";
+var SPREADSHEET_ID = "1PWhuDutSTs1Bg2lirVozX75ToFkvvnQBhF0Lmethncw";
+var SHEET_NAME = "Hospital Survey";
+var SCRIPT_BUILD = "2026-09-11-explicit-spreadsheet-v2";
 var EXPECTED_HEADERS = [
   "Date", "Roadshow Location", "Roadshow State", "Full Name", "Email Address", "Mobile Number",
   "IC Number", "Agent Name", "Agent ID", "Agent Email", "GM Name",
@@ -26,6 +27,17 @@ function onOpen() {
     .addToUi();
 }
 
+function getTargetSheet_() {
+  var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  var sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    throw new Error(
+      'Sheet tab not found: "' + SHEET_NAME + '" in spreadsheet "' + SPREADSHEET_ID + '"'
+    );
+  }
+  return sheet;
+}
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   try {
@@ -33,8 +45,7 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("Invalid payload");
 
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    if (!sheet) throw new Error("Sheet tab not found: " + SHEET_NAME);
+    var sheet = getTargetSheet_();
     verifyHeaders_(sheet);
 
     lock.waitLock(30000);
@@ -95,8 +106,7 @@ function sendAgentReports() {
 
   try {
     lock.waitLock(30000);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    if (!sheet) throw new Error("Sheet tab not found: " + SHEET_NAME);
+    var sheet = getTargetSheet_();
     verifyHeaders_(sheet);
 
     var lastRow = sheet.getLastRow();
@@ -208,7 +218,7 @@ function buildAgentReport_(agentEmail, leads) {
     { label: "Presentation done", value: function (values) { return values[19]; } },
     { label: "Potential follow up", value: function (values) { return values[20]; } },
     { label: "On the spot close case", value: function (values) { return values[21]; } },
-    { label: "3 month / 6 month PA?", value: function (values) { return values[22]; } },
+    { label: "PA Duration", value: function (values) { return values[22]; } },
     { label: "Remarks", value: function (values) { return values[23]; } },
     { label: "ANP", value: function (values) { return values[24]; } },
     { label: "Submission Timestamp", value: function (values) { return values[25]; } }
@@ -284,8 +294,8 @@ function validateOutcomes_(data) {
   ["presentationDone", "potentialFollowUp", "onTheSpotCloseCase"].forEach(function (key) {
     if (data[key] !== "Yes" && data[key] !== "No") throw new Error(key + " must be Yes or No");
   });
-  if (["3 month", "6 month", "N/A"].indexOf(data.paDuration) === -1) {
-    throw new Error("PA duration must be 3 month, 6 month, or N/A");
+  if (["3 month", "N/A"].indexOf(data.paDuration) === -1) {
+    throw new Error("PA duration must be 3 month or N/A");
   }
   var remarks = data.remarks == null ? "" : String(data.remarks).trim();
   if (remarks.length > 500) throw new Error("Remarks must not exceed 500 characters");

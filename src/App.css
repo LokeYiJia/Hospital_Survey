@@ -255,7 +255,6 @@ button:focus-visible {
 }
 
 .agent-modal .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.agent-modal .pa-duration-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .anp-subsection {
   max-width: none;
   margin: -8px 0 22px;

@@ -248,7 +248,7 @@ export default function App() {
             <ChoiceGroup legend="Presentation done" name="presentationDone" options={["Yes", "No"]} value={submissionDetails.presentationDone} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="Potential follow up" name="potentialFollowUp" options={["Yes", "No"]} value={submissionDetails.potentialFollowUp} onChange={updateSubmissionDetail} />
             <ChoiceGroup legend="On the spot close case" name="onTheSpotCloseCase" options={["Yes", "No"]} value={submissionDetails.onTheSpotCloseCase} onChange={updateSubmissionDetail} />
-            <ChoiceGroup legend="3 month / 6 month PA?" name="paDuration" options={["3 month", "6 month", "N/A"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} choicesClassName="pa-duration-choices" />
+            <ChoiceGroup legend="PA Duration" name="paDuration" options={["3 month", "N/A"]} value={submissionDetails.paDuration} onChange={updateSubmissionDetail} />
             <label className="field remarks-field"><span>Remarks</span><textarea name="remarks" value={submissionDetails.remarks} onChange={updateSubmissionDetail} maxLength="500" rows="4" placeholder="Optional" autoComplete="off" /></label>
             {submissionDetails.onTheSpotCloseCase === "Yes" && (
               <div className="conditional-field anp-subsection">

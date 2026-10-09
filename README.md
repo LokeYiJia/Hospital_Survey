@@ -7,7 +7,7 @@ React form
   -> POST /api/submit-lead
   -> Cloudflare Pages Function
   -> Google Apps Script Web App
-  -> "GDev Leads Gathering" Google Sheet tab
+  -> Google Sheet tab configured by `SPREADSHEET_ID` and `SHEET_NAME`
 ```
 
 The browser never receives or calls the Apps Script URL. There is no login or form access code.
@@ -43,7 +43,7 @@ Do not commit a real webhook URL. `.env.example` intentionally contains only an 
 
 ## Google Sheet setup
 
-Create or use a sheet tab named exactly `GDev Leads Gathering`. Row 1 must have these exact headers, in this order:
+Apps Script explicitly opens spreadsheet ID `1PWhuDutSTs1Bg2lirVozX75ToFkvvnQBhF0Lmethncw` and uses the tab named exactly `Hospital Survey`. Row 1 must have these exact headers, in this order:
 
 1. Date
 2. Roadshow Location
@@ -119,7 +119,7 @@ It forwards only these keys to Apps Script, in this order:
 }
 ```
 
-The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration, optional Remarks, and conditional ANP. Remarks accepts up to 500 characters and may be blank. ANP is shown and required only when `On the spot close case` is `Yes`; it is cleared when the answer is `No`. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
+The popup sends a second request with `action: "complete"`, the UUID, the three Yes/No answers, the PA duration (`3 month` or `N/A`), optional Remarks, and conditional ANP. Remarks accepts up to 500 characters and may be blank. ANP is shown and required only when `On the spot close case` is `Yes`; it is cleared when the answer is `No`. Checkbox arrays are converted to comma-separated strings and consent is validated but not forwarded.
 
 The frontend does not set a short request timeout or automatically retry. It disables submission immediately and also uses an in-flight guard against duplicate clicks. Values are cleared only after confirmed success and retained after failure.
 

@@ -119,6 +119,7 @@ test("rejects invalid state, popup answers, and ANP", async () => {
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), roadshowLocation: "Unknown Hospital" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validCreate(), roadshowState: "Sabah" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), presentationDone: "Maybe" }), env })).status, 400);
+  assert.equal((await onRequest({ request: requestFor({ ...validComplete(), paDuration: "6 month" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), paDuration: "12 month" }), env })).status, 400);
   assert.equal((await onRequest({ request: requestFor({ ...validComplete(), remarks: "x".repeat(501) }), env })).status, 400);
   const response = await onRequest({ request: requestFor({ ...validComplete(), anp: "RM 1,200" }), env });
